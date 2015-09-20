@@ -17,16 +17,20 @@ import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String SCREEN_NAME = "MAIN ACTIVITY";
-    private final String IMG_URL = "http://static.comicvine.com/uploads/original/12/120919/3209312-9660445429-hulk_.jpg";
     CustomImageView volley,UL,picasso;
     TextView volleyTime,ULTime,picassoTime;
+    long volleyStartTime,volleyEndTime,picassoStartTime,picassoEndTime,UlStartTime,UlEndTime;
+    private final String SCREEN_NAME = "MAIN ACTIVITY";
+    private final String IMG_URL = "http://static.comicvine.com/uploads/original/12/120919/3209312-9660445429-hulk_.jpg";
+
 
     private IOnImageChangeListener imageChangeVolley = new IOnImageChangeListener() {
         @Override
         public void imageChangedinView() {
-            Log.d(SCREEN_NAME,"Volley Image loaded");
-            volleyTime.setText("Volley image loaded");
+            Log.d(SCREEN_NAME, "Volley Image loaded");
+
+            volleyEndTime = System.currentTimeMillis();
+            volleyTime.setText("Volley image loaded in " + (volleyEndTime-volleyStartTime) + " milliseconds");
         }
     };
 
@@ -34,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void imageChangedinView() {
             Log.d(SCREEN_NAME,"Picasso Image loaded");
-            picassoTime.setText("Picasso image loaded");
+            picassoEndTime = System.currentTimeMillis();
+            picassoTime.setText("Picasso image loaded in "  + (picassoEndTime-picassoStartTime) + " milliseconds");
         }
     };
 
@@ -42,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void imageChangedinView() {
             Log.d(SCREEN_NAME,"Universal image loader Image loaded");
-            ULTime.setText("Univeral image loaded image loaded");
+            UlEndTime = System.currentTimeMillis();
+            ULTime.setText("Universal image loader image loaded in " + (UlEndTime-UlStartTime) + " milliseconds");
         }
     };
     @Override
@@ -63,16 +69,17 @@ public class MainActivity extends AppCompatActivity {
         UL.setImageChangeListiner(imageChangeUl);
         picasso.setImageChangeListiner(imageChangePicasso);
 
-        getImageWithPicasso(IMG_URL,picasso);
+        picassoStartTime = System.currentTimeMillis();
+        getImageWithPicasso(IMG_URL, picasso);
+        volleyStartTime = System.currentTimeMillis();
         getImageWithVolley(IMG_URL,volley);
+        UlStartTime = System.currentTimeMillis();
         getImageWithUniversalImageLoader(IMG_URL,UL);
 
     }
 
     private void getImageWithUniversalImageLoader(String imageURL,final CustomImageView imageView)
     {
-        //your image url
-
         ImageLoader imageLoader = ImageLoader.getInstance();
         DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true)
                 .cacheOnDisc(true).resetViewBeforeLoading(true)
