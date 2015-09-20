@@ -9,12 +9,14 @@
     tools:context=".MainActivity">
 
     <imageloading.jupneet.com.profilingimageloadinglibraries.CustomImageView
+        android:padding="10dp"
         android:id="@+id/volleyImage"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/volleyTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,13 +24,15 @@
         android:gravity="center" />
 
     <imageloading.jupneet.com.profilingimageloadinglibraries.CustomImageView
+        android:padding="10dp"
         android:id="@+id/picassoImage"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="100dp"
         android:layout_below="@id/volleyTime"
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/picassoTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,13 +40,15 @@
         android:gravity="center" />
 
     <imageloading.jupneet.com.profilingimageloadinglibraries.CustomImageView
+        android:padding="10dp"
         android:id="@+id/uImage"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="100dp"
         android:layout_below="@+id/picassoTime"
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/uTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

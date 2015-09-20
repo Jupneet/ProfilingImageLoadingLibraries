@@ -21,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
     TextView volleyTime,ULTime,picassoTime;
     long volleyStartTime,volleyEndTime,picassoStartTime,picassoEndTime,UlStartTime,UlEndTime;
     private final String SCREEN_NAME = "MAIN ACTIVITY";
-    private final String IMG_URL = "http://static.comicvine.com/uploads/original/12/120919/3209312-9660445429-hulk_.jpg";
+    private final String IMG_URL =
+            "http://hdwallpapers.cat/wallpaper/man_of_steel_superman_movie_hero_hd-wallpaper-1542626.jpg";
 
 
     private IOnImageChangeListener imageChangeVolley = new IOnImageChangeListener() {
