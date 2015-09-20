@@ -17,12 +17,13 @@ import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
-    CustomImageView volley,UL,picasso;
-    TextView volleyTime,ULTime,picassoTime;
-    long volleyStartTime,volleyEndTime,picassoStartTime,picassoEndTime,UlStartTime,UlEndTime;
+    CustomImageView volley, UL, picasso;
+    TextView volleyTime, ULTime, picassoTime;
+    boolean volleyCache,ulCache;
+    long volleyStartTime, volleyEndTime, picassoStartTime, picassoEndTime, UlStartTime, UlEndTime;
     private final String SCREEN_NAME = "MAIN ACTIVITY";
     private final String IMG_URL =
-            "http://hdwallpapers.cat/wallpaper/man_of_steel_superman_movie_hero_hd-wallpaper-1542626.jpg";
+            "https://yt3.ggpht.com/-DaDQYP98Hpc/AAAAAAAAAAI/AAAAAAAAAAA/DaBLSpgxXXc/s900-c-k-no/photo.jpg";
 
 
     private IOnImageChangeListener imageChangeVolley = new IOnImageChangeListener() {
@@ -31,40 +32,52 @@ public class MainActivity extends AppCompatActivity {
             Log.d(SCREEN_NAME, "Volley Image loaded");
 
             volleyEndTime = System.currentTimeMillis();
-            volleyTime.setText("Volley image loaded in " + (volleyEndTime-volleyStartTime) + " milliseconds");
+            if (volleyCache)
+                volleyTime.setText("Volley image loaded in " + (volleyEndTime - volleyStartTime) + " milliseconds"
+                        + " from cache ");
+            else
+                volleyTime.setText("Volley image loaded in " + (volleyEndTime - volleyStartTime) + " milliseconds"
+                        + " from web ");
+
         }
     };
 
     private IOnImageChangeListener imageChangePicasso = new IOnImageChangeListener() {
         @Override
         public void imageChangedinView() {
-            Log.d(SCREEN_NAME,"Picasso Image loaded");
+            Log.d(SCREEN_NAME, "Picasso Image loaded");
             picassoEndTime = System.currentTimeMillis();
-            picassoTime.setText("Picasso image loaded in "  + (picassoEndTime-picassoStartTime) + " milliseconds");
+            picassoTime.setText("Picasso image loaded in " + (picassoEndTime - picassoStartTime) + " milliseconds");
         }
     };
 
     private IOnImageChangeListener imageChangeUl = new IOnImageChangeListener() {
         @Override
         public void imageChangedinView() {
-            Log.d(SCREEN_NAME,"Universal image loader Image loaded");
+            Log.d(SCREEN_NAME, "Universal image loader Image loaded");
             UlEndTime = System.currentTimeMillis();
-            ULTime.setText("Universal image loader image loaded in " + (UlEndTime-UlStartTime) + " milliseconds");
+            if (ulCache)
+                ULTime.setText("Universal image loader image loaded in " + (UlEndTime - UlStartTime) + " milliseconds"
+                        + " from cache ");
+            else
+                ULTime.setText("Universal image loader image loaded in " + (UlEndTime - UlStartTime) + " milliseconds"
+                        + " from web ");
+
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        volley = (CustomImageView)findViewById(R.id.volleyImage);
+        volley = (CustomImageView) findViewById(R.id.volleyImage);
         UL = (CustomImageView) findViewById(R.id.uImage);
-        picasso = (CustomImageView)findViewById(R.id.picassoImage);
+        picasso = (CustomImageView) findViewById(R.id.picassoImage);
 
-        volleyTime  = (TextView)findViewById(R.id.volleyTime);
-        ULTime = (TextView)findViewById(R.id.uTime);
-        picassoTime = (TextView)findViewById(R.id.picassoTime);
-
+        volleyTime = (TextView) findViewById(R.id.volleyTime);
+        ULTime = (TextView) findViewById(R.id.uTime);
+        picassoTime = (TextView) findViewById(R.id.picassoTime);
 
         volley.setImageChangeListiner(imageChangeVolley);
         UL.setImageChangeListiner(imageChangeUl);
@@ -73,14 +86,15 @@ public class MainActivity extends AppCompatActivity {
         picassoStartTime = System.currentTimeMillis();
         getImageWithPicasso(IMG_URL, picasso);
         volleyStartTime = System.currentTimeMillis();
-        getImageWithVolley(IMG_URL,volley);
+        getImageWithVolley(IMG_URL, volley);
         UlStartTime = System.currentTimeMillis();
-        getImageWithUniversalImageLoader(IMG_URL,UL);
+        getImageWithUniversalImageLoader(IMG_URL, UL);
+
 
     }
 
-    private void getImageWithUniversalImageLoader(String imageURL,final CustomImageView imageView)
-    {
+    private void getImageWithUniversalImageLoader(String imageURL, final CustomImageView imageView) {
+        ulCache = false;
         ImageLoader imageLoader = ImageLoader.getInstance();
         DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true)
                 .cacheOnDisc(true).resetViewBeforeLoading(true)
@@ -88,17 +102,22 @@ public class MainActivity extends AppCompatActivity {
                 .showImageOnFail(R.drawable.sorrydog)
                 .showImageOnLoading(R.drawable.sorrydog).build();
 
+        if(imageLoader.getMemoryCache().get(IMG_URL)!=null ||imageLoader.getDiskCache().get(IMG_URL)!=null )
+            ulCache = true;
+
         imageLoader.displayImage(imageURL, imageView, options);
     }
 
-    private void getImageWithPicasso(String imageURL,final CustomImageView imageView)
-    {
+    private void getImageWithPicasso(String imageURL, final CustomImageView imageView) {
+
+        Picasso.with(this).setLoggingEnabled(true);
         Picasso.with(this).load(imageURL).error(R.drawable.sorrydog)
                 .into(imageView);
+
     }
 
-    private void getImageWithVolley(String imageURL, final CustomImageView imageView){
-
+    private void getImageWithVolley(String imageURL, final CustomImageView imageView) {
+        volleyCache = false;
         ImageRequest request = new ImageRequest(imageURL,
                 new Response.Listener<Bitmap>() {
                     @Override
@@ -111,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
                         imageView.setImageResource(R.drawable.sorrydog);
                     }
                 });
+        if (VolleySingleton.getInstance(this).getRequestQueue().getCache().get(IMG_URL) != null)
+            volleyCache = true;
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
